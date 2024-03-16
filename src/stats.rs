@@ -1,4 +1,4 @@
-use crate::dir_walk::{KnownFile};
+use crate::dir_walk::KnownFile;
 use crate::files::count_loc;
 use rayon::prelude::*;
 use std::collections::HashMap;
