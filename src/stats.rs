@@ -25,10 +25,8 @@ pub struct Stats {
     pub languages: HashMap<String, LanguageStat>,
 }
 
-pub fn gather_stats(path: &Path) -> Stats {
+pub fn gather_stats(known_files: Vec<KnownFile>) -> Stats {
     let stats = Arc::new(Mutex::new(Stats::default()));
-
-    let known_files = walk_dir(path).unwrap();
 
     known_files.into_par_iter().for_each(|known_file| {
         let loc = count_loc(&known_file.path).unwrap_or(0);

@@ -1,9 +1,9 @@
+use crate::files::match_file_type;
+use glob::Pattern;
 use std::{
     fs, io,
     path::{Path, PathBuf},
 };
-
-use crate::files::match_file_type;
 
 pub struct KnownFile {
     pub extension: String,
@@ -11,15 +11,21 @@ pub struct KnownFile {
     pub path: PathBuf,
 }
 
-pub fn walk_dir(dir: &Path) -> io::Result<Vec<KnownFile>> {
+pub fn walk_dir(dir: &Path, exclusions: Option<Vec<&str>>) -> io::Result<Vec<KnownFile>> {
     let mut files = Vec::new();
 
     if dir.is_dir() {
         for entry in fs::read_dir(dir)? {
             let path = entry?.path();
 
+            if let Some(ref exclusions) = exclusions {
+                if check_if_path_must_be_excluded(&path, exclusions) {
+                    continue;
+                }
+            }
+
             if path.is_dir() {
-                files.extend(walk_dir(&path)?);
+                files.extend(walk_dir(&path, exclusions.clone())?);
             } else {
                 let extension = path
                     .extension()
@@ -40,4 +46,12 @@ pub fn walk_dir(dir: &Path) -> io::Result<Vec<KnownFile>> {
     }
 
     Ok(files)
+}
+
+fn check_if_path_must_be_excluded(path: &Path, exclusions: &[&str]) -> bool {
+    exclusions.iter().any(|&exclusion| {
+        Pattern::new(exclusion)
+            .unwrap()
+            .matches(path.to_str().unwrap())
+    })
 }
