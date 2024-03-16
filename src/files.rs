@@ -4,8 +4,14 @@ pub fn count_loc(file_path: &Path) -> io::Result<u64> {
     Ok(fs::read_to_string(file_path)?.lines().count() as u64)
 }
 
-pub fn match_file_type(extension: &str) -> Option<&'static str> {
-    match extension {
+pub fn map_extension_to_file_type(path: &Path) -> Option<(&str, &'static str)> {
+    let extension = path
+        .extension()
+        .unwrap_or_default()
+        .to_str()
+        .unwrap_or_default();
+
+    let file_type = match extension {
         "abap" => Some("ABAP"),
         "abnf" => Some("ABNF"),
         "as" => Some("ActionScript"),
@@ -275,5 +281,11 @@ pub fn match_file_type(extension: &str) -> Option<&'static str> {
         "zig" => Some("Zig"),
         "zsh" => Some("Zsh"),
         _ => None,
+    };
+
+    if let Some(file_type) = file_type {
+        Some((extension, file_type))
+    } else {
+        None
     }
 }

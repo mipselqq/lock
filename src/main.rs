@@ -9,7 +9,7 @@ use print::print_stats;
 use stats::gather_stats;
 use std::path::Path;
 
-use crate::files::match_file_type;
+use crate::files::map_extension_to_file_type;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -36,21 +36,12 @@ fn main() {
     let known_files = if path.is_dir() {
         walk_dir(path, exclusions).unwrap()
     } else {
-        let extension = path
-            .extension()
-            .unwrap_or_default()
-            .to_str()
-            .unwrap_or_default()
-            .to_string();
-
-        let file_type = match_file_type(&extension);
-
-        let Some(file_type) = file_type else {
+        let Some((extension, file_type)) = map_extension_to_file_type(path) else {
             return print!("The file is unknown");
         };
 
         vec![KnownFile {
-            extension,
+            extension: extension.to_string(),
             file_type,
             path: path.to_path_buf(),
         }]

@@ -1,4 +1,4 @@
-use crate::files::match_file_type;
+use crate::files::map_extension_to_file_type;
 use glob::Pattern;
 use std::{
     fs, io,
@@ -25,21 +25,12 @@ pub fn walk_dir(dir: &Path, exclusions: Option<Vec<&str>>) -> io::Result<Vec<Kno
 
         if path.is_dir() {
             files.extend(walk_dir(&path, exclusions.clone())?);
-        } else {
-            let extension = path
-                .extension()
-                .unwrap_or_default()
-                .to_str()
-                .unwrap_or_default()
-                .to_string();
-
-            if let Some(file_type) = match_file_type(&extension) {
-                files.push(KnownFile {
-                    extension,
-                    file_type,
-                    path,
-                });
-            }
+        } else if let Some((extension, file_type)) = map_extension_to_file_type(&path) {
+            files.push(KnownFile {
+                extension: extension.to_string(),
+                file_type,
+                path,
+            });
         }
     }
 
