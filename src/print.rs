@@ -29,10 +29,11 @@ pub fn print_stats(stats: Stats, must_sort_languages_by_loc: bool) {
     );
 }
 
+// I hope nobody will use The WenYan Programming Language, right? XD
 fn print_table_col(col1: &str, col2: &str, col3: &str, col4: &str) {
-    println!("{:<15} {:<10} {:<10} {:<10}", col1, col2, col3, col4);
+    println!("{:<23} {:<10} {:<10} {:<10}", col1, col2, col3, col4);
 }
 
 fn print_horisontal_divisor() {
-    println!("{}", "-".repeat(15 + 10 + 10 + 10));
+    println!("{}", "-".repeat(23 + 10 + 10 + 10));
 }
