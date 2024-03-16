@@ -14,33 +14,31 @@ pub struct KnownFile {
 pub fn walk_dir(dir: &Path, exclusions: Option<Vec<&str>>) -> io::Result<Vec<KnownFile>> {
     let mut files = Vec::new();
 
-    if dir.is_dir() {
-        for entry in fs::read_dir(dir)? {
-            let path = entry?.path();
+    for entry in fs::read_dir(dir)? {
+        let path = entry?.path();
 
-            if let Some(ref exclusions) = exclusions {
-                if check_if_path_must_be_excluded(&path, exclusions) {
-                    continue;
-                }
+        if let Some(ref exclusions) = exclusions {
+            if check_if_path_must_be_excluded(&path, exclusions) {
+                continue;
             }
+        }
 
-            if path.is_dir() {
-                files.extend(walk_dir(&path, exclusions.clone())?);
-            } else {
-                let extension = path
-                    .extension()
-                    .unwrap_or_default()
-                    .to_str()
-                    .unwrap_or_default()
-                    .to_string();
+        if path.is_dir() {
+            files.extend(walk_dir(&path, exclusions.clone())?);
+        } else {
+            let extension = path
+                .extension()
+                .unwrap_or_default()
+                .to_str()
+                .unwrap_or_default()
+                .to_string();
 
-                if let Some(file_type) = match_file_type(&extension) {
-                    files.push(KnownFile {
-                        extension,
-                        file_type,
-                        path,
-                    });
-                }
+            if let Some(file_type) = match_file_type(&extension) {
+                files.push(KnownFile {
+                    extension,
+                    file_type,
+                    path,
+                });
             }
         }
     }
