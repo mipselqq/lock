@@ -1,5 +1,5 @@
-use crate::dir_walker::walk_dir;
-use crate::file_analyzer::{count_loc, match_file_type};
+use crate::dir_walk::walk_dir;
+use crate::files::{count_loc, match_file_type};
 use rayon::prelude::*;
 use std::collections::HashMap;
 use std::path::Path;

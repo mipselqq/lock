@@ -1,5 +1,5 @@
-mod dir_walker;
-mod file_analyzer;
+mod dir_walk;
+mod files;
 mod print;
 mod stats;
 
