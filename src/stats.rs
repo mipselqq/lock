@@ -1,8 +1,8 @@
-use crate::dir_walk::{walk_dir, KnownFile};
+use crate::dir_walk::{KnownFile};
 use crate::files::count_loc;
 use rayon::prelude::*;
 use std::collections::HashMap;
-use std::path::Path;
+
 use std::sync::{Arc, Mutex};
 
 #[derive(Default, Debug, Clone)]
