@@ -38,7 +38,6 @@ pub fn match_file_type(extension: &str) -> Option<&'static str> {
         "toml" => Some("TOML"),
         "ini" => Some("INI"),
         "env" => Some("Environment Variables"),
-        "bin" => Some("Binary file"),
         _ => None,
     }
 }

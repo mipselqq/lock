@@ -13,7 +13,7 @@ pub fn print_stats(stats: Stats, must_sort_languages_by_loc: bool) {
 
     for stat in languages_stats_vec {
         print_table_col(
-            &stat.filetype,
+            &stat.file_type,
             &stat.extension,
             &stat.loc.to_string(),
             &stat.files_count.to_string(),
