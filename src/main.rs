@@ -1,8 +1,10 @@
 mod dir_walker;
 mod file_analyzer;
+mod print;
 mod stats;
 
 use clap::Parser;
+use print::print_stats;
 use stats::gather_stats;
 use std::path::Path;
 
@@ -17,5 +19,5 @@ fn main() {
     let args = Args::parse();
     let path = Path::new(&args.path);
 
-    gather_stats(path);
+    print_stats(gather_stats(path), true);
 }

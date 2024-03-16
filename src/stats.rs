@@ -3,30 +3,29 @@ use crate::file_analyzer::{count_loc, match_file_type};
 use rayon::prelude::*;
 use std::collections::HashMap;
 use std::path::Path;
-
-#[derive(Default, Debug)]
-struct LanguageStat {
-    extension: String,
-    filetype: String,
-    loc: u64,
-    files_count: u64,
-}
-
-#[derive(Default, Debug)]
-struct OverallStats {
-    loc: u64,
-    files_count: u64,
-}
-
-#[derive(Default, Debug)]
-struct Stats {
-    overall: OverallStats,
-    languages: HashMap<String, LanguageStat>,
-}
-
 use std::sync::{Arc, Mutex};
 
-pub fn gather_stats(path: &Path) {
+#[derive(Default, Debug, Clone)]
+pub struct LanguageStat {
+    pub extension: String,
+    pub filetype: String,
+    pub loc: u64,
+    pub files_count: u64,
+}
+
+#[derive(Default, Debug, Clone)]
+pub struct OverallStats {
+    pub loc: u64,
+    pub files_count: u64,
+}
+
+#[derive(Default, Debug, Clone)]
+pub struct Stats {
+    pub overall: OverallStats,
+    pub languages: HashMap<String, LanguageStat>,
+}
+
+pub fn gather_stats(path: &Path) -> Stats {
     let stats = Arc::new(Mutex::new(Stats::default()));
 
     let paths = walk_dir(path).unwrap();
@@ -41,7 +40,7 @@ pub fn gather_stats(path: &Path) {
         update_stats(&mut stats, extension, filetype, loc);
     });
 
-    dbg!(stats);
+    Arc::try_unwrap(stats).unwrap().into_inner().unwrap()
 }
 
 fn update_stats(stats: &mut Stats, extension: &str, filetype: Option<&str>, loc: u64) {
