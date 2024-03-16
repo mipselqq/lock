@@ -4,17 +4,20 @@ use std::{
     path::Path,
 };
 
-pub fn walk_dir(dir: &Path, cb: &mut dyn FnMut(&DirEntry)) -> io::Result<()> {
+pub fn walk_dir(dir: &Path) -> io::Result<Vec<DirEntry>> {
+    let mut files = Vec::new();
+
     if dir.is_dir() {
         for entry in fs::read_dir(dir)? {
             let entry = entry?;
             let path = entry.path();
             if path.is_dir() {
-                walk_dir(&path, cb)?;
+                files.extend(walk_dir(&path)?);
             } else {
-                cb(&entry);
+                files.push(entry);
             }
         }
     }
-    Ok(())
+
+    Ok(files)
 }

@@ -1,5 +1,6 @@
 use crate::dir_walker::walk_dir;
 use crate::file_analyzer::{count_loc, match_file_type};
+use rayon::prelude::*;
 use std::collections::HashMap;
 use std::path::Path;
 
@@ -23,18 +24,22 @@ struct Stats {
     languages: HashMap<String, LanguageStat>,
 }
 
-pub fn gather_stats(path: &Path) {
-    let mut stats = Stats::default();
+use std::sync::{Arc, Mutex};
 
-    walk_dir(path, &mut |dir_entry| {
+pub fn gather_stats(path: &Path) {
+    let stats = Arc::new(Mutex::new(Stats::default()));
+
+    let paths = walk_dir(path).unwrap();
+
+    paths.par_iter().for_each(|dir_entry| {
         let path = dir_entry.path();
         let extension = path.extension().unwrap_or_default().to_str().unwrap();
         let loc = count_loc(&path).unwrap_or(0);
         let filetype = match_file_type(extension);
 
+        let mut stats = stats.lock().unwrap();
         update_stats(&mut stats, extension, filetype, loc);
-    })
-    .unwrap();
+    });
 
     dbg!(stats);
 }
