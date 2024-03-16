@@ -1,4 +1,4 @@
-```json
+```
 ❯ ./lock -p ./tdesktop/
 Type            Extension  Lines      Files     
 ---------------------------------------------
