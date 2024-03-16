@@ -283,9 +283,5 @@ pub fn map_extension_to_file_type(path: &Path) -> Option<(&str, &'static str)> {
         _ => None,
     };
 
-    if let Some(file_type) = file_type {
-        Some((extension, file_type))
-    } else {
-        None
-    }
+    file_type.map(|file_type| (extension, file_type))
 }
