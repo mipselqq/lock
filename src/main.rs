@@ -28,16 +28,20 @@ fn main() {
         return println!("The directory doesn't exist");
     }
 
-    let exclusions = args
-        .exclude_list
-        .as_ref()
-        .map(|s| s.split(',').collect::<Vec<&str>>());
-
     let known_files = if path.is_dir() {
-        walk_dir(path, exclusions).unwrap()
+        let exclusions = args
+            .exclude_list
+            .as_ref()
+            .map(|s| s.split(',').collect::<Vec<&str>>());
+
+        let Ok(known_files) = walk_dir(path, exclusions) else {
+            return println!("Failed to read a directory when searching for files");
+        };
+
+        known_files
     } else {
         let Some((extension, file_type)) = map_extension_to_file_type(path) else {
-            return print!("The file is unknown");
+            return println!("The file is unknown");
         };
 
         vec![KnownFile {
